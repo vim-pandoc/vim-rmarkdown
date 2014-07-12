@@ -19,7 +19,27 @@ function! s:MapOT(ot)
     return output_type
 endfunction
 
-function! rmarkdown#command#Command(args)
+function! s:MapExt(ot)
+    let ot = tolower(a:ot)
+    if ot == "" || ot == "html" || ot == "md" || ot == "pdf"
+        let ext = ot
+    elseif ot == "word"
+        let ext = "docx"
+    elseif ot == "beamer"
+        let ext = "pdf"
+    elseif ot == "revealjs" || ot == "ioslides"
+        let ext = "html"
+    elseif ot == "all"
+        let ext = "html"
+    elseif ot =~ '+'
+        let ext = map(split(ot, '+'), 's:MapOT(v:val)')[0]
+    else
+        throw "rmarkdown:E1"
+    endif
+    return ext
+endfunction
+
+function! rmarkdown#command#Command(bang, args)
     let args_data = split(a:args, " ", 1)
     try
         let output_type = s:MapOT(args_data[0])
@@ -30,13 +50,23 @@ function! rmarkdown#command#Command(args)
             let output_type_arg = 'c(' . join(output_types, ",").')'
         endif
     catch /rmarkdown:E1/
-        echohl ErrorMsg
+        echohl errormsg
         echom "vim-rmarkdown: output type not recognized"
-        echohl None
+        echohl none
         return
     endtry
     let invocation = 'Rscript -e "rmarkdown::render(\"'.expand("%:p") . '\", '. output_type_arg.')"'
-    call system(invocation)
+    let r_output = system(invocation)
+    if v:shell_error
+        echohl errormsg
+        echom "vim-rmarkdown: rmarkdown failed"
+        echohl none
+    else
+        echom "vim:markdown: succesfully ran '". substitute(invocation, '\', '', 'g') . "'"
+        if a:bang == "!"
+            call system('xdg-open '. expand("%:p:r").'.'.s:MapExt(args_data[0]))
+        endif
+    endif
 endfunction
 
 function! rmarkdown#command#CommandComplete(a, c, p)

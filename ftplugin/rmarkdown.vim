@@ -2,4 +2,6 @@
 runtime ftplugin/pandoc.vim
 
 " Rmarkdown:
-command! -buffer -nargs=* -complete=custom,rmarkdown#command#CommandComplete RMarkdown call rmarkdown#command#Command('<args>')
+command! -buffer -bang -nargs=* 
+            \-complete=custom,rmarkdown#command#CommandComplete 
+            \RMarkdown call rmarkdown#command#Command('<bang>', '<args>')
