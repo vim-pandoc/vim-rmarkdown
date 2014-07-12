@@ -38,3 +38,11 @@ function! rmarkdown#command#Command(args)
     let invocation = 'Rscript -e "rmarkdown::render(\"'.expand("%:p") . '\", '. output_type_arg.')"'
     call system(invocation)
 endfunction
+
+function! rmarkdown#command#CommandComplete(a, c, p)
+    if len(split(a:c, " ", 1)) < 3
+        return join(["pdf", "html", "word", "md", "beamer", "revealjs", "ioslides"], "\n")
+    else
+        return ""
+    endif
+endfunction
