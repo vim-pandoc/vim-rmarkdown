@@ -8,10 +8,14 @@ Adds support for R Markdown to vim.
 - SETUP                                                 *vim-rmarkdown-setup*
 
 vim-rmarkdown requires 
+
 1) the |vim-pandoc| and |vim-pandoc-syntax| plugins. 
     See https://github.com/vim-pandoc/
 2) the rmarkdown standalone package
     https://github.com/rstudio/rmarkdown
+
+Optionally, vim-rmarkdown can use |vim-pandoc-after| and |NrrwRgn| 
+(https://github.com/chrisbra/NrrwRgn) (see |:RNrrw|).
 
 vim-rmarkdown's repo uses the typical bundle layout, so it's very simple to
 install using some plugin manager such as pathogen, Vundle or NeoBundle. For
@@ -98,5 +102,11 @@ arguments). For example,
     :RMarkdown latex_engine="lualatex" bibliography="input.bib"
 
 will cause rmarkdown to fail.
+
+                                                                     *:RNrrw*
+
+If the NrrwRgn plugin is available, vim-rmarkdown will register an extra
+command, |:RNrrw|, which "narrows" the current R chunk in a separate buffer.
+This command is also mapped to "<LocalLeader>ccn" in normal mode.
 
 " vim: set ft=help :
