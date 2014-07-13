@@ -82,7 +82,10 @@ function! rmarkdown#command#Command(bang, args)
         let render_opts = ''
     endif
 
-    let invocation = 'Rscript -e "library(rmarkdown);render(\"'.expand("%:p") . '\", '. output_type_arg .render_opts.')"'
+    let invocation = 'Rscript -e "library(rmarkdown);render(\"'. 
+                \ expand("%:p") . '\", '. 
+                \ output_type_arg .
+                \ render_opts.')"'
     let r_output = systemlist(invocation)
     if v:shell_error
         echohl errormsg
