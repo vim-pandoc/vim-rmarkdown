@@ -1,3 +1,5 @@
+let s:exexec = expand("<sfile>:h") . "/exexec.R"
+
 function! s:MapOT(ot)
     let ot = tolower(a:ot)
     if ot == "" || ot == "pdf" || ot == "html" || ot == "word" || ot == "md"
@@ -86,23 +88,39 @@ function! rmarkdown#command#Command(bang, args)
                 \ expand("%:p") . '\", '. 
                 \ output_type_arg .
                 \ render_opts.')"'
-    let r_output = systemlist(invocation)
-    if v:shell_error
-        echohl errormsg
-        echom "vim-rmarkdown: rmarkdown failed"
-        echohl none
-        botright 10new
-        call append(line('$'), r_output)
-        norm dd
-        setlocal buftype=nofile
-        setlocal bufhidden=wipe
-        setlocal nomodifiable
-        noremap <buffer> q :close<CR>
-    else
-        echom "vim:markdown: succesfully ran '". substitute(invocation, '\', '', 'g') . "'"
+    let s:output_file = expand("%:p:r"). '.' .s:MapExt(args_data[0])
+    if has('clientserver') && 
+                \v:servername != '' &&
+                \executable(s:exexec)
         if a:bang == "!"
-            call system('xdg-open '. expand("%:p:r").'.'.s:MapExt(args_data[0]))
+            let open_arg = "--open"
+        else
+            let open_arg = "--noopen"
         endif
+        silent exe "!".s:exexec." --servername ".v:servername . " ". open_arg. " " .invocation . "&"
+    else
+        let r_output = systemlist(invocation)
+        if v:shell_error
+            echohl errormsg
+            echom "vim-rmarkdown: rmarkdown failed"
+            echohl none
+            botright 10new
+            call append(line('$'), r_output)
+            norm dd
+            setlocal buftype=nofile
+            setlocal bufhidden=wipe
+            setlocal nomodifiable
+            noremap <buffer> q :close<CR>
+        else
+            echom "vim:rmarkdown: ran succesfully"
+            call rmarkdown#command#Callback(a:bang == "!")
+        endif
+    endif
+endfunction
+
+function! rmarkdown#command#Callback(open)
+    if a:open == 1
+        call system('xdg-open '. s:output_file)
     endif
 endfunction
 
