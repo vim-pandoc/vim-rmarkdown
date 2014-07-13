@@ -55,12 +55,46 @@ function! rmarkdown#command#Command(bang, args)
         echohl none
         return
     endtry
-    let invocation = 'Rscript -e "rmarkdown::render(\"'.expand("%:p") . '\", '. output_type_arg.')"'
-    let r_output = system(invocation)
+
+    " we support passing arguments to rmarkdown::render and output objects,
+    " but only for single formats (i.e., "pdf", but not "pdf+html")
+    if type(output_type) == type("")
+        let opts_data = matchlist(a:args, '\(-\s\)\@<=\(.*\)\(\s-\)\@=\(\(.*-\s\)\(.*$\)\)*')
+        if opts_data != []
+            let render_opts = ', '. substitute(opts_data[2], '\"', '\\\"', 'g')
+            let object_opts = opts_data[6]
+            if object_opts != ''
+                let output_type_arg = substitute(output_type . "(".object_opts.")", '\"', '\\\"', 'g')
+            endif
+        else
+            let render_opts_data = matchstr(a:args, '\(-\s\)\@<=.*')
+            if render_opts_data != ''
+                let render_opts  = ', ' .render_opts_data
+            else
+                let render_opts = ''
+                let object_opts = join(args_data[1:], ' ')
+                if object_opts != ''
+                    let output_type_arg = substitute(output_type . "(" . object_opts . ")" , '\"', '\\\"', 'g')
+                endif
+            endif
+        endif
+    else
+        let render_opts = ''
+    endif
+
+    let invocation = 'Rscript -e "library(rmarkdown);render(\"'.expand("%:p") . '\", '. output_type_arg .render_opts.')"'
+    let r_output = systemlist(invocation)
     if v:shell_error
         echohl errormsg
         echom "vim-rmarkdown: rmarkdown failed"
         echohl none
+        botright 10new
+        call append(line('$'), r_output)
+        norm dd
+        setlocal buftype=nofile
+        setlocal bufhidden=wipe
+        setlocal nomodifiable
+        noremap <buffer> q :close<CR>
     else
         echom "vim:markdown: succesfully ran '". substitute(invocation, '\', '', 'g') . "'"
         if a:bang == "!"
