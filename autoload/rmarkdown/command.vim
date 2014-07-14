@@ -103,38 +103,40 @@ function! rmarkdown#command#Command(bang, args)
     else
         let r_output = systemlist(invocation)
         if v:shell_error
-            echohl errormsg
-            echom "vim-rmarkdown: rmarkdown failed"
-            echohl none
             botright 10new
             call append(line('$'), r_output)
             norm dd
-            setlocal buftype=nofile
-            setlocal bufhidden=wipe
-            setlocal nomodifiable
-            noremap <buffer> q :close<CR>
+            call s:RmarkdownFailure()
         else
-            echom "vim:rmarkdown: ran succesfully"
-            call rmarkdown#command#OpenFile(a:bang == "!")
+            call s:RmarkdownSuccess(a:band == "!")
         endif
     endif
 endfunction
 
 function! rmarkdown#command#Callback(open)
     if filereadable("rmarkdown.out")
+        botright 10split rmarkdown.out
+        silent exe "!rm rmarkdown.out"
+        call s:RmarkdownFailure()
+    else 
+        call s:RmarkdownSuccess(a:open)
+    endif
+endfunction
+
+function! s:RmarkdownSuccess(open)
+    echom "vim:rmarkdown: ran succesfully"
+    call rmarkdown#command#OpenFile(a:open)
+endfunction
+
+function! s:RmarkdownFailure()
         echohl errormsg
         echom "vim-rmarkdown: rmarkdown failed"
         echohl none
-        botright 10split rmarkdown.out
         setlocal buftype=nofile
         setlocal bufhidden=wipe
         setlocal nomodifiable
         noremap <buffer> q :close<CR>
         redraw!
-        silent exe "!rm rmarkdown.out"
-    else 
-        call rmarkdown#command#OpenFile(a:open)
-    endif
 endfunction
 
 function! rmarkdown#command#OpenFile(open)
