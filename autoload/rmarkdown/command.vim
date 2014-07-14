@@ -98,6 +98,8 @@ function! rmarkdown#command#Command(bang, args)
             let open_arg = "--noopen"
         endif
         silent exe "!".s:exexec." --servername ".v:servername . " ". open_arg. " " .invocation . "&"
+        "Replace the line above with this to debug
+        "exe "!".s:exexec." --servername ".v:servername . " ". open_arg. " " .invocation 
     else
         let r_output = systemlist(invocation)
         if v:shell_error
@@ -113,12 +115,29 @@ function! rmarkdown#command#Command(bang, args)
             noremap <buffer> q :close<CR>
         else
             echom "vim:rmarkdown: ran succesfully"
-            call rmarkdown#command#Callback(a:bang == "!")
+            call rmarkdown#command#OpenFile(a:bang == "!")
         endif
     endif
 endfunction
 
 function! rmarkdown#command#Callback(open)
+    if filereadable("rmarkdown.out")
+        echohl errormsg
+        echom "vim-rmarkdown: rmarkdown failed"
+        echohl none
+        botright 10split rmarkdown.out
+        setlocal buftype=nofile
+        setlocal bufhidden=wipe
+        setlocal nomodifiable
+        noremap <buffer> q :close<CR>
+        redraw!
+        silent exe "!rm rmarkdown.out"
+    else 
+        call rmarkdown#command#OpenFile(a:open)
+    endif
+endfunction
+
+function! rmarkdown#command#OpenFile(open)
     if a:open == 1
         call system('xdg-open '. s:output_file)
     endif

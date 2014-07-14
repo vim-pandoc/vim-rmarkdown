@@ -1,9 +1,13 @@
 #!/usr/bin/env Rscript
 
 args <- commandArgs(trailingOnly = TRUE)
-rmarkdown_invocation <- paste(c(args[4], args[5], paste(c("'", args[6], "'"), collapse="")), collapse=" ")
+rmarkdown_invocation <- paste(c(args[4:5], paste(c("'", args[6], "'"), collapse=""), '2>&1'), collapse=" ")
 output <- system(rmarkdown_invocation, intern=TRUE)
-#writeLines(output, 'rmarkdown.out')
+# have we failed?
+if (!is.null(attr(output, "status")))
+{
+    writeLines(output, 'rmarkdown.out')
+}
 
 servername <- args[2]
 if (args[3] == "--open")
