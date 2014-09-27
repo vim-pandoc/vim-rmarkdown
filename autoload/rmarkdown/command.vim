@@ -108,7 +108,7 @@ function! rmarkdown#command#Command(bang, args)
             norm dd
             call s:RmarkdownFailure()
         else
-            call s:RmarkdownSuccess(a:band == "!")
+            call s:RmarkdownSuccess(a:bang == "!")
         endif
     endif
 endfunction
