@@ -58,8 +58,8 @@ command. Its syntax is
     :RMarkdown[!] [OUTPUT_TYPE] [- RENDER_ARGS[ -]] [OUTPUT_TYPE_ARGS]
 
 OUTPUT_TYPE is one of "pdf", "word", "html", "md", "beamer", "ioslides",
-"revealjs", "all", or a combination thereof (e.g., "pdf+html"). Command
-completion is provided for defining this variable.
+"revealjs", "slidy", "all", or a combination thereof (e.g., "pdf+html").
+Command completion is provided for defining this variable.
 
 RENDER_ARGS are arguments passed to rmarkdown::render(...), and
 OUTPUT_TYPE_ARGS are passed to output objects such as rmarkdown::pdf_document(...) 

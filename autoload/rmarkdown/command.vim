@@ -8,7 +8,7 @@ function! s:MapOT(ot)
         else
             let output_type = ot . "_document"
         endif
-    elseif ot == "beamer" || ot == "revealjs" || ot == "ioslides"
+    elseif ot == "beamer" || ot == "revealjs" || ot == "ioslides" || ot == "slidy"
         let output_type = ot . "_presentation"
     elseif ot == "all"
         let output_type = ot
@@ -29,7 +29,7 @@ function! s:MapExt(ot)
         let ext = "docx"
     elseif ot == "beamer"
         let ext = "pdf"
-    elseif ot == "revealjs" || ot == "ioslides"
+    elseif ot == "revealjs" || ot == "ioslides" || ot == "slidy"
         let ext = "html"
     elseif ot == "all"
         let ext = "html"
@@ -147,7 +147,7 @@ endfunction
 
 function! rmarkdown#command#CommandComplete(a, c, p)
     if len(split(a:c, " ", 1)) < 3
-        return join(["pdf", "html", "word", "md", "beamer", "revealjs", "ioslides"], "\n")
+        return join(["pdf", "html", "word", "md", "beamer", "revealjs", "ioslides", "slidy"], "\n")
     else
         return ""
     endif
