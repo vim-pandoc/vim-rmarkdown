@@ -84,10 +84,17 @@ function! rmarkdown#command#Command(bang, args)
         let render_opts = ''
     endif
 
-    let invocation = 'Rscript -e "library(rmarkdown);render(\"'. 
-                \ expand("%:p") . '\", '. 
-                \ output_type_arg .
-                \ render_opts.')"'
+    if output_type == "revealjs_presentation"
+        let invocation = 'Rscript -e "library(rmarkdown);library(revealjs);render(\"'. 
+                    \ expand("%:p") . '\", '. 
+                    \ 'revealjs_presentation()' .
+                    \ render_opts.')"'
+    else
+        let invocation = 'Rscript -e "library(rmarkdown);render(\"'. 
+                    \ expand("%:p") . '\", '. 
+                    \ output_type_arg .
+                    \ render_opts.')"'
+    endif
     let s:output_file = expand("%:p:r"). '.' .s:MapExt(args_data[0])
     if has('clientserver') && 
                 \v:servername != '' &&

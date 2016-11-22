@@ -13,6 +13,9 @@ vim-rmarkdown requires
     See https://github.com/vim-pandoc/
 2) the rmarkdown standalone package
     https://github.com/rstudio/rmarkdown
+3) the revealjs standalone package (if you want to make revealjs
+presentations)
+    https://github.com/rstudio/revealjs
 
 Optionally, vim-rmarkdown can use |vim-pandoc-after| and |NrrwRgn| 
 (https://github.com/chrisbra/NrrwRgn) (see |:RNrrw|).
