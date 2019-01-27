@@ -34,8 +34,7 @@ extra functionality specific to rmarkdown.
 
 vim-rmarkdown extends pandoc's markdown syntax so
 
-    ``` 
-    {r qplot, fig.width=4, message=FALSE}
+    ```{r qplot, fig.width=4, message=FALSE}
     library(ggplot2)
     summary(cars)
     qplot(speed, dist, data=cars) + 
