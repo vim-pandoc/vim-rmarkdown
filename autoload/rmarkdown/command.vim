@@ -131,7 +131,7 @@ function! rmarkdown#command#Callback(open)
 endfunction
 
 function! s:RmarkdownSuccess(open)
-    echom "vim:rmarkdown: ran succesfully"
+    echom "vim:rmarkdown: ran successfully"
     call rmarkdown#command#OpenFile(a:open)
 endfunction
 
