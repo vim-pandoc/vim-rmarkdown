@@ -23,7 +23,9 @@ endfunction
 
 function! s:MapExt(ot)
     let ot = tolower(a:ot)
-    if ot == "" || ot == "html" || ot == "md" || ot == "pdf"
+    if ot == ""
+        let ext = "html"
+    elseif ot == "html" || ot == "md" || ot == "pdf"
         let ext = ot
     elseif ot == "word"
         let ext = "docx"
@@ -42,11 +44,13 @@ function! s:MapExt(ot)
 endfunction
 
 function! rmarkdown#command#Command(bang, args)
+    let @9 = @+
+    let @+ = expand("%:p")
     let args_data = split(a:args, " ", 1)
     try
         let output_type = s:MapOT(args_data[0])
         if type(output_type) == type("")
-            let output_type_arg = '\"' . output_type . '\"'
+            let output_type_arg = "'" . output_type . "'"
         elseif type(output_type) == type([])
             let output_types = map(output_type, '"\\\"".v:val."\\\""')
             let output_type_arg = 'c(' . join(output_types, ",").')'
@@ -85,13 +89,13 @@ function! rmarkdown#command#Command(bang, args)
     endif
 
     if output_type == "revealjs_presentation"
-        let invocation = 'Rscript -e "library(rmarkdown);library(revealjs);render(\"'. 
-                    \ expand("%:p") . '\", '. 
+        let invocation = 'Rscript -e "library(rmarkdown);library(revealjs);render('. 
+                    \ 'readClipboard(), '. 
                     \ 'revealjs_presentation()' .
                     \ render_opts.')"'
     else
-        let invocation = 'Rscript -e "library(rmarkdown);render(\"'. 
-                    \ expand("%:p") . '\", '. 
+        let invocation = 'Rscript -e "library(rmarkdown);render('.
+                    \ 'readClipboard(), '. 
                     \ output_type_arg .
                     \ render_opts.')"'
     endif
@@ -118,6 +122,7 @@ function! rmarkdown#command#Command(bang, args)
             call s:RmarkdownSuccess(a:bang == "!")
         endif
     endif
+    let @+ = @9
 endfunction
 
 function! rmarkdown#command#Callback(open)
@@ -148,7 +153,13 @@ endfunction
 
 function! rmarkdown#command#OpenFile(open)
     if a:open == 1
-        call system('xdg-open '. s:output_file)
+        echo "Opening " . s:output_file
+        if has('win32')
+            call system(s:output_file)
+            return
+        else
+            call system('xdg-open '. s:output_file)
+        endif
     endif
 endfunction
 
