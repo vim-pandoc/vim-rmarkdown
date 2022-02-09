@@ -1,0 +1,50 @@
+*quarto-vim*
+
+                              QUARTO-VIM
+
+Adds support for Quarto syntax highlighting to vim.
+    https://quarto.org
+
+- SETUP                                                 *quarto-vim-setup*
+
+quarto-vim requires 
+
+1) the |vim-pandoc-syntax| plugin. 
+    See https://github.com/vim-pandoc/vim-pandoc-syntax
+2) the quarto publishing system
+    https://quarto.org
+
+quarto-vim's repo uses the typical bundle layout, so it's very simple to
+install using some plugin manager such as pathogen, Vundle or NeoBundle. For
+example, using Vundle you should add
+
+    Plugin 'vim-pandoc/vim-pandoc-syntax'
+    Plugin 'quarto-dev/quarto-vim'
+
+to your .vimrc, source it, and execute |:PluginInstall|.
+
+
+- USAGE                                                 *quarto-vim-usage*
+
+Files with the .qmd extension are automatically detected as Quarto files, 
+and quarto-vim loads vim-pandoc-syntax for .qmd files.
+
+- SYNTAX                                               *vim-rmarkdown-syntax*
+
+quarto-vim extends pandoc's markdown syntax so that:
+
+    ```{python}
+    import numpy as np
+    np.arange(15).reshape(3, 5)
+    ```
+
+    ```{r}
+    summary(cars)
+    ```
+are recognized as Python and R code cells.
+
+Inline R is also handled for the knitr engine:
+
+    inline unformatted text like `r 1 + 2` 
+
+R and Python syntax is used within such fenced codeblocks and inline spans.
