@@ -20,10 +20,25 @@ quarto-vim's repo uses the typical bundle layout, so it's very simple to
 install using some plugin manager such as [pathogen](https://github.com/tpope/vim-pathogen), [Vundle](https://github.com/VundleVim/Vundle.vim) or [NeoBundle](https://github.com/Shougo/neobundle.vim). For
 example, using Vundle you should add
 
-    Plugin 'vim-pandoc/vim-pandoc-sytnax'
-    Plugin 'quarto-dev/quarto-vim'
+```viml
+Plugin 'vim-pandoc/vim-pandoc-syntax'
+Plugin 'quarto-dev/quarto-vim'
+```
 
 to your .vimrc, source it, and execute `:PluginInstall`.
+
+Using [packer.nvim](https://github.com/wbthomason/packer.nvim), you should add
+
+```lua
+use({
+   "quarto-dev/quarto-vim",
+   requires = {
+      {"vim-pandoc/vim-pandoc-syntax"},
+   },
+   ft = {"quarto"},
+})
+``` 
+to your `.vimrc` (or `init.lua` in Neovim).
 
 ## Usage
 
